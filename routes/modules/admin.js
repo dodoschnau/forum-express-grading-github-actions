@@ -4,7 +4,8 @@ const router = express.Router()
 const adminControllers = require('../../controllers/admin-controllers')
 
 router.get('/restaurants', adminControllers.getRestaurants)
-router.get('/create-restaurant', adminControllers.createRestaurant)
+router.get('/restaurants/create', adminControllers.createRestaurant)
+router.get('/restaurants/:id', adminControllers.getRestaurant)
 router.post('/restaurants', adminControllers.postRestaurants)
 
 router.use('/', (req, res) => res.redirect('/admin/restaurants'))
