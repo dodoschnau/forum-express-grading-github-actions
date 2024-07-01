@@ -62,6 +62,18 @@ const adminControllers = {
         res.redirect('/admin/restaurants')
       })
       .catch(err => next(err))
+  },
+  deleteRestaurant: (req, res, next) => {
+    Restaurant.findByPk(req.params.id)
+      .then(restaurant => {
+        if (!restaurant) throw new Error('Restaurant not found!')
+        return restaurant.destroy()
+      })
+      .then(() => {
+        req.flash('success_messages', 'Restaurant deleted successfully')
+        res.redirect('/admin/restaurants')
+      })
+      .catch(err => next(err))
   }
 }
 
