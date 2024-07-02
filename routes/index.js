@@ -10,8 +10,6 @@ const { authenticated, authenticatedAdmin } = require('../middleware/auth')
 
 const { generalErrorHandler } = require('../middleware/error-handler')
 
-router.use('/', generalErrorHandler)
-
 router.use('/admin', authenticatedAdmin, admin)
 
 router.get('/signup', userController.signUpPage)
