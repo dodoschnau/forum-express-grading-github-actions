@@ -1,16 +1,21 @@
 const express = require('express')
 const router = express.Router()
 
-const adminControllers = require('../../controllers/admin-controllers')
+const adminController = require('../../controllers/admin-controller')
 const upload = require('../../middleware/multer')
 
-router.get('/restaurants/create', adminControllers.createRestaurant)
-router.get('/restaurants/:id/edit', adminControllers.editRestaurant)
-router.get('/restaurants/:id', adminControllers.getRestaurant)
-router.put('/restaurants/:id', upload.single('image'), adminControllers.putRestaurant)
-router.delete('/restaurants/:id', adminControllers.deleteRestaurant)
-router.get('/restaurants', adminControllers.getRestaurants)
-router.post('/restaurants', upload.single('image'), adminControllers.postRestaurants)
+// Restaurants
+router.get('/restaurants/create', adminController.createRestaurant)
+router.get('/restaurants/:id/edit', adminController.editRestaurant)
+router.get('/restaurants/:id', adminController.getRestaurant)
+router.put('/restaurants/:id', upload.single('image'), adminController.putRestaurant)
+router.delete('/restaurants/:id', adminController.deleteRestaurant)
+router.get('/restaurants', adminController.getRestaurants)
+router.post('/restaurants', upload.single('image'), adminController.postRestaurants)
+
+// Users
+router.get('/users', adminController.getUsers)
+router.patch('/users/:id', adminController.patchUser)
 
 router.use('/', (req, res) => res.redirect('/admin/restaurants'))
 
