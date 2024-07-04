@@ -1,12 +1,16 @@
-const { Restaurant, User } = require('../models')
+const { Restaurant, User, Category } = require('../models')
 const { localFileHandler } = require('../helpers/file-helpers')
 
 const adminController = {
   getRestaurants: (req, res, next) => {
     Restaurant.findAll({
-      raw: true
+      raw: true,
+      nest: true,
+      include: [Category]
     })
-      .then(restaurants => res.render('admin/restaurants', { restaurants }))
+      .then(restaurants => {
+        res.render('admin/restaurants', { restaurants })
+      })
       .catch(err => next(err))
   },
   createRestaurant: (req, res, next) => {
@@ -35,10 +39,14 @@ const adminController = {
       .catch(err => next(err))
   },
   getRestaurant: (req, res, next) => {
-    return Restaurant.findByPk(req.params.id, { raw: true })
+    return Restaurant.findByPk(req.params.id,
+      {
+        nest: true,
+        include: [Category]
+      })
       .then(restaurant => {
         if (!restaurant) return res.redirect('/admin/restaurants')
-        res.render('admin/restaurant', { restaurant })
+        res.render('admin/restaurant', { restaurant: restaurant.toJSON() })
       })
       .catch(err => next(err))
   },
