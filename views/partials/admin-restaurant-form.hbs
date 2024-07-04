@@ -4,6 +4,14 @@
     required>
 </div>
 <div class="form-row mb-3">
+  <label class="form-label" for="categoryId">Category</label>
+  <select class="form-control" id="categoryId" name="categoryId">
+    {{#each categories}}
+    <option value="{{this.id}}">{{this.name}}</option>
+    {{/each}}
+  </select>
+</div>
+<div class="form-row mb-3">
   <label class="form-label" for="tel">Tel</label>
   <input class="form-control" type="tel" name="tel" id="tel" pattern="[0-9]{2}-[0-9]{4}-[0-9]{4}"
     placeholder="e.g. 02-1234-5678" value="{{restaurant.tel}}">
