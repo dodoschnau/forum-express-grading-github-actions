@@ -1,5 +1,5 @@
-const db = require('../models')
-const { User } = db
+const { User } = require('../models')
+const { localFileHandler } = require('../helpers/file-helpers')
 
 const bcrypt = require('bcryptjs')
 
@@ -38,6 +38,49 @@ const userController = {
     req.flash('success_messages', 'Sign out successful!')
     req.logout()
     res.redirect('/signin')
+  },
+
+  // User Profile
+  getUser: (req, res, next) => {
+    return User.findByPk(req.params.id, { raw: true })
+      .then(user => {
+        if (!user) throw new Error('User not found!')
+        res.render('users/profile', { user })
+      })
+      .catch(err => next(err))
+  },
+
+  editUser: (req, res, next) => {
+    return User.findByPk(req.params.id, { raw: true })
+      .then(user => {
+        if (!user) throw new Error('User not found!')
+        res.render('users/edit', { user })
+      })
+      .catch(err => next(err))
+  },
+
+  putUser: (req, res, next) => {
+    const { name } = req.body
+    if (!name) throw new Error('User name is required!')
+
+    const { file } = req
+
+    return Promise.all([
+      User.findByPk(req.params.id),
+      localFileHandler(file)
+    ])
+      .then(([user, filePath]) => {
+        if (!user) throw new Error('User not found!')
+        return user.update({
+          name,
+          image: filePath || user.image
+        })
+      })
+      .then(() => {
+        req.flash('success_messages', '使用者資料編輯成功')
+        res.redirect('/users/' + req.params.id)
+      })
+      .catch(err => next(err))
   }
 }
 

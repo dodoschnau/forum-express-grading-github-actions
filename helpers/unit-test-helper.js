@@ -14,7 +14,7 @@ const createModelMock = (name, data, joinedTableName, sourceData) => {
           ...data[objIndex],
           ...changes
         }
-        const ThisModel = dbMock.model(name);
+        const ThisModel = dbMock.model(name)
         return ThisModel.build(data[objIndex])
       },
       destroy: function () {
