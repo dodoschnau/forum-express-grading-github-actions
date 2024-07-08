@@ -1,4 +1,5 @@
-const { User } = require('../models')
+const { Sequelize } = require('sequelize')
+const { User, Comment, Restaurant } = require('../models')
 const { localFileHandler } = require('../helpers/file-helpers')
 
 const bcrypt = require('bcryptjs')
@@ -42,10 +43,25 @@ const userController = {
 
   // User Profile
   getUser: (req, res, next) => {
-    return User.findByPk(req.params.id, { raw: true })
-      .then(user => {
+    return Promise.all([
+      User.findByPk(req.params.id, { raw: true }),
+      Comment.findAndCountAll({
+        where: { userId: req.params.id },
+        include: [{ model: Restaurant, attributes: ['id', 'name', 'image'] }],
+        attributes: [
+          [Sequelize.fn('DISTINCT', Sequelize.col('Restaurant.id')), 'restaurantId']
+        ],
+        raw: true,
+        nest: true
+      })
+    ])
+      .then(([user, { count: allCommentCount, rows: commentRows }]) => {
+        // allCommentCount => The total number of comments by this user (including duplicate restaurants)
+        // commentRows => The restaurants that this user has commented on (excluding duplicate restaurants)
+        const commentedRestaurants = commentRows.map(row => ({ id: row.Restaurant.id, image: row.Restaurant.image }))
+
         if (!user) throw new Error('User not found!')
-        res.render('users/profile', { user })
+        res.render('users/profile', { user, allCommentCount, commentedRestaurants })
       })
       .catch(err => next(err))
   },
