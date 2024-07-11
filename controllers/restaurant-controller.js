@@ -101,6 +101,24 @@ const restaurantController = {
         return res.render('feeds', { restaurants, comments })
       })
       .catch(err => next(err))
+  },
+  getTopRestaurants: (req, res, next) => {
+    // 找出該餐廳的所有收藏者
+    return Restaurant.findAll({
+      include: [{ model: User, as: 'FavoritedUsers' }]
+    })
+      .then(restaurants => {
+        const result = restaurants
+          .map(restaurant => ({
+            ...restaurant.toJSON(),
+            favoritedCount: restaurant.FavoritedUsers.length,
+            isFavorited: req.user && req.user.FavoritedRestaurants.some(fr => fr.id)
+          }))
+          .sort((a, b) => b.favoritedCount - a.favoritedCount)
+          .slice(0, 10)
+        return res.render('top-restaurants', { restaurants: result })
+      })
+      .catch(err => next(err))
   }
 }
 module.exports = restaurantController
