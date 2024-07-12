@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
-const { User, Comment, Restaurant, Favorite, Like, Followship } = require('../models')
-const { localFileHandler } = require('../helpers/file-helpers')
+const { User, Comment, Restaurant, Favorite, Like, Followship } = require('../../models')
+const { localFileHandler } = require('../../helpers/file-helpers')
 
 const bcrypt = require('bcryptjs')
 
