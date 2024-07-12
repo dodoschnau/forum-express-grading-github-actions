@@ -1,6 +1,6 @@
 const path = require('path')
 const express = require('express')
-const { pages } = require('./routes')
+const { pages, apis } = require('./routes')
 const handlebars = require('express-handlebars') // 引入 express-handlebars
 const session = require('express-session')
 const flash = require('connect-flash')
@@ -41,6 +41,7 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use('/api', apis)
 app.use(pages)
 
 app.listen(port, () => {
