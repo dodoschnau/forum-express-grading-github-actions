@@ -14,6 +14,7 @@ router.use('/admin', authenticated, authenticatedAdmin, admin)
 
 router.get('/restaurants', authenticated, restController.getRestaurants)
 
+router.post('/signup', userController.signUp)
 // 登入頁面不需驗證
 router.post('/signin', passport.authenticate('local', { session: false }), userController.signIn)
 

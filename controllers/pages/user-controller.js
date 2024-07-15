@@ -1,32 +1,19 @@
 const { Sequelize } = require('sequelize')
 const { User, Comment, Restaurant, Favorite, Like, Followship } = require('../../models')
 const { localFileHandler } = require('../../helpers/file-helpers')
-
-const bcrypt = require('bcryptjs')
+const userServices = require('../../services/user-service')
 
 const userController = {
   signUpPage: (req, res) => {
     res.render('signup')
   },
   signUp: (req, res, next) => {
-    if (req.body.password !== req.body.passwordCheck) throw new Error('Passwords do not match!')
-
-    User.findOne({ where: { email: req.body.email } })
-      .then(user => {
-        if (user) throw new Error('Email already exists!')
-        return bcrypt.hash(req.body.password, 10)
-      })
-      .then(hash => User.create({
-        name: req.body.name,
-        email: req.body.email,
-        password: hash
-      })
-      )
-      .then(() => {
-        req.flash('success_messages', 'Sign up successful!')
-        res.redirect('/signin')
-      })
-      .catch(err => next(err))
+    userServices.signUp(req, res, next, (err, data) => {
+      if (err) return next(err)
+      req.flash('success_messages', 'Sign up successful!')
+      req.session.createUser = data
+      res.redirect('/signin')
+    })
   },
   signInPage: (req, res) => {
     res.render('signin')
