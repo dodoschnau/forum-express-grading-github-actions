@@ -68,6 +68,25 @@ const restaurantServices = {
         })
       })
       .catch(err => cb(err))
+  },
+  getDashboard: (req, cb) => {
+    return Promise.all([
+      Restaurant.findByPk(req.params.id, {
+        include: Category,
+        raw: true,
+        nest: true
+      }),
+      Comment.count({ where: { restaurantId: req.params.id } })
+    ])
+      .then(([restaurant, commentCount]) => {
+        if (!restaurant) {
+          const err = new Error("Restaurant didn't exist!")
+          err.status = 404
+          throw err
+        }
+        return cb(null, { restaurant, commentCount })
+      })
+      .catch(err => cb(err))
   }
 }
 
