@@ -13,6 +13,7 @@ const { apiErrorHandler } = require('../../middleware/error-handler')
 router.use('/admin', authenticated, authenticatedAdmin, admin)
 
 router.get('/restaurants', authenticated, restController.getRestaurants)
+router.get('/restaurants/:id', authenticated, restController.getRestaurant)
 
 router.post('/signup', userController.signUp)
 // 登入頁面不需驗證
