@@ -13,7 +13,17 @@ const adminServices = {
   },
   postRestaurants: (req, cb) => {
     const { name, tel, address, openingHours, description, categoryId } = req.body
-    if (!name) throw new Error('Restaurant name is required!')
+    if (!name) {
+      const err = new Error('Restaurant name is required!')
+      err.status = 400
+      throw err
+    }
+
+    if (!categoryId) {
+      const err = new Error('Restaurant category is required!')
+      err.status = 400
+      throw err
+    }
 
     const { file } = req
     localFileHandler(file)
