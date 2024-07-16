@@ -1,37 +1,100 @@
 <div class="card mt-5">
   <div class="profile-card m-5">
     <div class="profile-info d-flex">
-      <img class="img-responsive center-block mb-5 rounded-circle" src="{{user.image}}"
+      <img class="img-responsive center-block mb-5 rounded-circle" src="{{userProfile.image}}"
         style="width: 250px; height: 250px; object-fit: cover; transition: opacity 0.5s; opacity:0;"
         onload="this.style.opacity=1;">
       <div class="profile-info-content ms-5">
-        <h5>{{user.name}}</h5>
-        <p>{{user.email}}</p>
-        <a href="/users/{{user.id}}/edit">
+        <h5>{{userProfile.name}}</h5>
+        <p>{{userProfile.email}}</p>
+        {{#ifCond userProfile.id user.id }}
+        <a href="/users/{{userProfile.id}}/edit">
           <button type="button" class="btn btn-primary">Edit</button>
         </a>
+        {{/ifCond}}
       </div>
     </div>
   </div>
 </div>
 
-<div class="card mt-5">
-  <div class="card-header">
-    總評論數：{{allCommentCount}}
+<div class="card-group d-flex justify-content-around">
+  <div class="card mt-5" style="max-width: 35rem;">
+    <div class="card-header">
+      {{followingsCount}} followings
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">你追蹤的人</h5>
+      {{#ifCond followingsCount 0}}
+      <p>沒有追蹤任何人</p>
+      {{else}}
+      {{#each followings}}
+      <a href="/users/{{this.id}}">
+        <p>{{this.name}}</p>
+      </a>
+      {{/each}}
+      {{/ifCond}}
+    </div>
   </div>
-  <div class="card-body">
-    <h5 class="card-title">評論過的餐廳</h5>
-    {{#ifCond allCommentCount 0}}
-    <p>沒有評論過的餐廳</p>
-    {{else}}
-    {{#each commentedRestaurants}}
-    <a href="/restaurants/{{this.id}}">
-      <img class="img-responsive center-block m-2" src="{{this.image}}"
-        style="width: 100px; height: 100px; object-fit: cover; transition: opacity 0.5s; opacity:0;"
-        onload="this.style.opacity=1;">
-    </a>
-    {{/each}}
-    {{/ifCond}}
+
+  <div class="card mt-5" style="max-width: 35rem;">
+    <div class="card-header">
+      {{followersCount}} followers
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">追蹤你的人</h5>
+      {{#ifCond followersCount 0}}
+      <p>目前沒有人追蹤</p>
+      {{else}}
+      {{#each followers}}
+      <a href="/users/{{this.id}}">
+        <p>{{this.name}}</p>
+      </a>
+      </a>
+      {{/each}}
+      {{/ifCond}}
+    </div>
+  </div>
+</div>
+
+<div class="card-group d-flex justify-content-around">
+  <div class="card mt-5" style="max-width: 35rem;">
+    <div class="card-header">
+      總評論數：{{allCommentCount}}
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">評論過的餐廳</h5>
+      {{#ifCond allCommentCount 0}}
+      <p>沒有評論過的餐廳</p>
+      {{else}}
+      {{#each commentedRestaurants}}
+      <a href="/restaurants/{{this.id}}">
+        <img class="img-responsive center-block m-2" src="{{this.image}}"
+          style="width: 100px; height: 100px; object-fit: cover; transition: opacity 0.5s; opacity:0;"
+          onload="this.style.opacity=1;">
+      </a>
+      {{/each}}
+      {{/ifCond}}
+    </div>
+  </div>
+
+  <div class="card mt-5" style="max-width: 35rem;">
+    <div class="card-header">
+      總收藏數：{{favoritedCount}}
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">收藏過的餐廳</h5>
+      {{#ifCond favoritedCount 0}}
+      <p>沒有收藏的餐廳</p>
+      {{else}}
+      {{#each favoritedRestaurants}}
+      <a href="/restaurants/{{this.id}}">
+        <img class="img-responsive center-block m-2" src="{{this.image}}"
+          style="width: 100px; height: 100px; object-fit: cover; transition: opacity 0.5s; opacity:0;"
+          onload="this.style.opacity=1;">
+      </a>
+      {{/each}}
+      {{/ifCond}}
+    </div>
   </div>
 </div>
 

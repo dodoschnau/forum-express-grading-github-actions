@@ -31,7 +31,15 @@ const userController = {
   // User Profile
   getUser: (req, res, next) => {
     return Promise.all([
-      User.findByPk(req.params.id, { raw: true }),
+      User.findByPk(req.params.id,
+        {
+          include: [
+            { model: User, as: 'Followers' },
+            { model: User, as: 'Followings' },
+            { model: Restaurant, as: 'FavoritedRestaurants' }
+          ]
+        }
+      ),
       Comment.findAndCountAll({
         where: { userId: req.params.id },
         include: [{ model: Restaurant, attributes: ['id', 'name', 'image'] }],
@@ -42,13 +50,28 @@ const userController = {
         nest: true
       })
     ])
-      .then(([user, { count: allCommentCount, rows: commentRows }]) => {
+      .then(([userProfile, { count: allCommentCount, rows: commentRows }]) => {
         // allCommentCount => The total number of comments by this user (including duplicate restaurants)
         // commentRows => The restaurants that this user has commented on (excluding duplicate restaurants)
         const commentedRestaurants = commentRows.map(row => ({ id: row.Restaurant.id, image: row.Restaurant.image }))
 
-        if (!user) throw new Error('User not found!')
-        res.render('users/profile', { user, allCommentCount, commentedRestaurants })
+        const userData = userProfile.toJSON()
+        const followings = userData.Followings.map(f => ({ id: f.id, image: f.image, name: f.name }))
+        const followers = userData.Followers.map(f => ({ id: f.id, image: f.image, name: f.name }))
+        const favoritedRestaurants = userData.FavoritedRestaurants.map(f => ({ id: f.id, image: f.image }))
+
+        if (!userProfile) throw new Error('User not found!')
+        res.render('users/profile', {
+          userProfile: userData,
+          allCommentCount,
+          commentedRestaurants,
+          followings,
+          followers,
+          favoritedRestaurants,
+          followingsCount: followings.length,
+          followersCount: followers.length,
+          favoritedCount: favoritedRestaurants.length
+        })
       })
       .catch(err => next(err))
   },
