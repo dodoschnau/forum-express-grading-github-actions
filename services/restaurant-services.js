@@ -87,6 +87,28 @@ const restaurantServices = {
         return cb(null, { restaurant, commentCount })
       })
       .catch(err => cb(err))
+  },
+  getFeeds: (req, cb) => {
+    return Promise.all([
+      Restaurant.findAll({
+        limit: 10,
+        order: [['createdAt', 'DESC']],
+        include: [Category],
+        raw: true,
+        nest: true
+      }),
+      Comment.findAll({
+        limit: 10,
+        order: [['createdAt', 'DESC']],
+        include: [User, Restaurant],
+        raw: true,
+        nest: true
+      })
+    ])
+      .then(([restaurants, comments]) => {
+        return cb(null, { restaurants, comments })
+      })
+      .catch(err => cb(err))
   }
 }
 
