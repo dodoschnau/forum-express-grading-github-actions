@@ -78,6 +78,41 @@ const adminServices = {
         cb(null, { restaurant, categories })
       })
       .catch(err => cb(err))
+  },
+  putRestaurant: (req, cb) => {
+    const { name, tel, address, openingHours, description, categoryId } = req.body
+    if (!name) {
+      const err = new Error('Restaurant name is required!')
+      err.status = 400
+      throw err
+    }
+
+    const { file } = req
+
+    Promise.all([
+      Restaurant.findByPk(req.params.id),
+      localFileHandler(file)
+    ])
+      .then(([restaurant, filePath]) => {
+        if (!restaurant) {
+          const err = new Error('Restaurant not found!')
+          err.status = 404
+          throw err
+        }
+        return restaurant.update({
+          name,
+          tel,
+          address,
+          openingHours,
+          description,
+          image: filePath || restaurant.image,
+          categoryId
+        })
+      })
+      .then(editedRestaurant => {
+        return cb(null, { restaurant: editedRestaurant })
+      })
+      .catch(err => cb(err))
   }
 }
 
