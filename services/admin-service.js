@@ -63,6 +63,21 @@ const adminServices = {
         cb(null, { categories })
       })
       .catch(err => cb(err))
+  },
+  editRestaurant: (req, cb) => {
+    return Promise.all([
+      Restaurant.findByPk(req.params.id, { raw: true }),
+      Category.findAll({ raw: true })
+    ])
+      .then(([restaurant, categories]) => {
+        if (!restaurant) {
+          const err = new Error('Restaurant not found!')
+          err.status = 404
+          throw err
+        }
+        cb(null, { restaurant, categories })
+      })
+      .catch(err => cb(err))
   }
 }
 
