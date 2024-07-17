@@ -53,6 +53,16 @@ const adminServices = {
       })
       .then(deletedRestaurant => cb(null, { restaurant: deletedRestaurant }))
       .catch(err => cb(err))
+  },
+  createRestaurant: (req, cb) => {
+    Category.findAll({
+      attributes: ['id', 'name'],
+      raw: true
+    })
+      .then(categories => {
+        cb(null, { categories })
+      })
+      .catch(err => cb(err))
   }
 }
 

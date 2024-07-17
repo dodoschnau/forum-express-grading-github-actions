@@ -7,13 +7,7 @@ const adminController = {
     adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('admin/restaurants', data))
   },
   createRestaurant: (req, res, next) => {
-    Category.findAll({
-      raw: true
-    })
-      .then(categories => {
-        res.render('admin/create-restaurant', { categories })
-      })
-      .catch(err => next(err))
+    adminServices.createRestaurant(req, (err, data) => err ? next(err) : res.render('admin/create-restaurant', data))
   },
   postRestaurants: (req, res, next) => {
     adminServices.postRestaurants(req, (err, data) => {
