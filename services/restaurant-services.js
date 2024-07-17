@@ -109,6 +109,24 @@ const restaurantServices = {
         return cb(null, { restaurants, comments })
       })
       .catch(err => cb(err))
+  },
+  getTopRestaurants: (req, cb) => {
+    // 找出該餐廳的所有收藏者
+    return Restaurant.findAll({
+      include: [{ model: User, as: 'FavoritedUsers' }]
+    })
+      .then(restaurants => {
+        const result = restaurants
+          .map(restaurant => ({
+            ...restaurant.toJSON(),
+            favoritedCount: restaurant.FavoritedUsers.length,
+            isFavorited: req.user && req.user.FavoritedRestaurants.some(fr => fr.id)
+          }))
+          .sort((a, b) => b.favoritedCount - a.favoritedCount)
+          .slice(0, 10)
+        return cb(null, { restaurants: result })
+      })
+      .catch(err => cb(err))
   }
 }
 
